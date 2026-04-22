@@ -161,31 +161,35 @@ FD time loop; the only serial axis is time. Dynamic warping stays on the CPU
 │   └── _viz_out/                21 parity PNGs (source, image ops, FD, RTM, wavepath, iter 1, convergence)
 └── results/
     ├── model/                   vel_true_201x801x2.5m.bin (TRUE model) + velh_init_201x801x2.5m.bin (initial model)
+    ├── observed/                Ricker source.bin + cpg/cpg_{1..41}.bin observed plane-wave CSGs (~189 MB)
     ├── velinv/                  velinv_{1,5,10,15,20,25,28,30}.bin reconstructed velocity snapshots (float32 raw, 201×801, Fortran column-major)
     ├── gradient/                gradient_1.bin
     ├── misfits_iter*.npy        per-iter misfit_tot logged by run_iter.py
     └── fffs_iter*.npy           per-iter line-search scalar fff
 
 All `*.bin` in `results/` share the same layout: little-endian float32,
-201 × 801, Fortran column-major (read with `np.fromfile(path, "<f4").reshape(801, 201).T`).
-The TRUE and initial models let you reproduce the convergence-vs-TRUE plot
-without needing the full Fortran bundle.
-```
+Fortran column-major (read with `np.fromfile(path, "<f4").reshape(nx, nz).T`
+for 2-D grids, or `reshape(ntr, nt).T` for shot gathers). With the
+`results/model/` + `results/observed/` bundles the repo is **self-contained**:
+you can run the inversion end-to-end without the Fortran package.
 
-**Heads-up about the tests.** `tests/conftest.py` hard-codes two paths that
-are local to the author's development machine:
+**Parity tests vs. inversion runs — different data requirements.** The
+parity tests in `tests/` compare torch against the Fortran + NumPy oracles
+and therefore need both of those reference trees available locally; the
+inversion itself only needs what is already in `results/`. The relevant
+paths are configured as follows:
 
-- `pkg_root = /home/pisquare/zhijun/pwmva_fortran/pwmva_package` — the full
-  Fortran code + data bundle (velocity model, observed CSG `cpg_*.bin`,
-  reference outputs `velinv_<N>.bin`).
-- `py_root = /home/pisquare/zhijun/pwmva_fortran/pwmva_python` — the NumPy
-  + numba reference port whose `pwmva.*` modules are imported as oracles.
+| What | How to point it | Needed for |
+|---|---|---|
+| Input data (models + observed CSG) | `--pkg` flag of `scripts/run_iter.py`, default `results/` in this repo | running inversion |
+| Fortran oracle root (`pwmva_package`) | `PWMVA_PKG_ROOT` env var, or edit `tests/conftest.py` | parity tests |
+| NumPy oracle root (`pwmva_python`) | `PWMVA_PY_ROOT` env var, or edit `tests/conftest.py` | parity tests |
 
-You will need both of those present to run the parity tests. If you only
-want to run the **inversion itself**, `scripts/run_iter.py` does not depend
-on any of that — it only needs the Fortran `pwmva_package` for the initial
-velocity, observed data and parfile. Update the `PKG` constant at the top of
-`scripts/run_iter.py` to point at your local copy.
+The machine this was developed on had `pwmva_package` and `pwmva_python`
+under `/home/pisquare/zhijun/pwmva_fortran/` — that path is baked into a
+few scripts/tests as a default. Override with the env vars above or patch
+the `PKG = Path(...)` line at the top of each script if you're running
+elsewhere.
 
 ---
 
@@ -198,8 +202,10 @@ cd Wave-equation-Migration-Velocity-Analysis-Using-Plane-wave-based-CIGs
 pip install -e .
 pip install matplotlib numba   # dev deps (numba is only used for CPU warping)
 
-# Edit scripts/run_iter.py → set PKG to your pwmva_package path, or set up
-# the same directory layout locally. Required files:
+# The input data bundle required to run the inversion is already shipped
+# in this repo under results/model/ and results/observed/. If you instead
+# want to point at the original Fortran package, edit scripts/run_iter.py
+# and set the PKG = Path(...) constant at the top. Required files under PKG:
 #   {PKG}/working/parfile_pwmva_warp_rerun.sh
 #   {PKG}/model/2D_models/mlayer/{velh,vel}_201x801x2.5m.bin
 #   {PKG}/model/2D_models/mlayer/coord_pw_45t45.dat
