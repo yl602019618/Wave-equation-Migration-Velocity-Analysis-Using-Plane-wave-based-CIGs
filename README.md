@@ -1,20 +1,51 @@
 # Wave-equation Migration Velocity Analysis Using Plane-wave Common Image Gathers (PyTorch, GPU)
 
-A PyTorch + CUDA reproduction of **Bowen Guo (2017)**, *"Wave-equation
-Migration Velocity Analysis Using Plane-wave Common Image Gathers"*, KAUST.
+A PyTorch + CUDA reproduction of
+
+> **Guo, B. and Schuster, G. T. (2017).** *Wave-equation migration velocity
+> analysis using plane-wave common-image gathers.* **Geophysics**, 82(5),
+> S327–S340. <https://doi.org/10.1190/geo2016-0596.1>
+
 Every FD / RTM / wavepath operation runs simultaneously over a batch of plane
-waves on a single GPU. Correctness is validated step-by-step against both the
-original Fortran implementation and a NumPy + numba CPU port.
+waves on a single GPU. Correctness is validated step-by-step against both
+the original Fortran implementation by the authors and a NumPy + numba CPU
+port.
 
-- Original Fortran implementation: <https://github.com/> (Bowen Guo, KAUST,
-  referenced as `pwmva_package` in the development notes)
-- NumPy + numba reference implementation (CPU, bit-perfect to Fortran): the
-  private `pwmva_python` package — see the paper notes in `plan.md`.
-- Paper PDF (`Bowen.pdf`) available in the Fortran package `reference/`
-  directory.
+### References used while building this implementation
 
-> If you are the author of the original Fortran code and would like this
-> repository linked from yours, please open an issue.
+- **Paper**
+  Guo, B., & Schuster, G. T. (2017). *Wave-equation migration velocity
+  analysis using plane-wave common-image gathers.* **Geophysics**, 82(5),
+  S327–S340. <https://doi.org/10.1190/geo2016-0596.1>
+
+- **KAUST CSIM course notes (MVA chapter)** — used as the conceptual
+  reference while implementing the wavepath gradient and line search:
+  <https://csim.kaust.edu.sa/files/SeismicInversion/Chapter.MVA/index.html>
+
+- **Original Fortran implementation** by the authors (the development notes
+  refer to this bundle as `pwmva_package`; the `pwmva_warp` branch with the
+  `mlayer` example is the exact run this repository reproduces bit-to-bit
+  through iteration 1).
+
+- **NumPy + numba CPU port** (bit-perfect oracle to Fortran) — used as an
+  in-process oracle for every parity test in `tests/`; see `plan.md`.
+
+### How to cite
+
+If this reproduction is useful to you, please cite the original paper:
+
+```bibtex
+@article{guo2017pwmva,
+  title   = {Wave-equation migration velocity analysis using plane-wave common-image gathers},
+  author  = {Guo, Bowen and Schuster, Gerard T.},
+  journal = {Geophysics},
+  volume  = {82},
+  number  = {5},
+  pages   = {S327--S340},
+  year    = {2017},
+  doi     = {10.1190/geo2016-0596.1}
+}
+```
 
 ---
 
@@ -251,13 +282,18 @@ the dtype to FP64 — at the cost of ~3× slower FD and ~2× more memory.
 
 ## 7. Acknowledgements
 
-- Original Fortran implementation: **Bowen Guo** (KAUST, 2017).
+- Original paper and Fortran implementation: **Guo, B. & Schuster, G. T.
+  (2017)**, *Wave-equation migration velocity analysis using plane-wave
+  common-image gathers*, **Geophysics 82(5), S327–S340**,
+  <https://doi.org/10.1190/geo2016-0596.1>.
+- KAUST CSIM MVA chapter, used as a pedagogical reference:
+  <https://csim.kaust.edu.sa/files/SeismicInversion/Chapter.MVA/index.html>.
 - Dynamic image warping: **Dave Hale (2013)**.
 - NumPy + numba reference port and Fortran alignment notes: the
   `pwmva_python` companion package (see `plan.md`).
 - This PyTorch port and the parity-testing harness were built on top of the
-  `pwmva_python` reference in collaboration with the author, aiming for a
-  drop-in accelerated replacement of the CPU pipeline on commodity GPUs.
+  `pwmva_python` reference, aiming for a drop-in accelerated replacement of
+  the CPU pipeline on commodity GPUs.
 
 ## 8. License
 
