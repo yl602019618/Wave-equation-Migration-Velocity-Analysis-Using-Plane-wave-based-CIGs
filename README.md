@@ -160,10 +160,16 @@ FD time loop; the only serial axis is time. Dynamic warping stays on the CPU
 │   ├── test_parity_*.py         six parity test modules, covering T1–T6
 │   └── _viz_out/                21 parity PNGs (source, image ops, FD, RTM, wavepath, iter 1, convergence)
 └── results/
-    ├── velinv/                  velinv_{1,5,10,15,20,25,28,30}.bin (int/float-32 raw, 201×801, Fortran column-major)
+    ├── model/                   vel_true_201x801x2.5m.bin (TRUE model) + velh_init_201x801x2.5m.bin (initial model)
+    ├── velinv/                  velinv_{1,5,10,15,20,25,28,30}.bin reconstructed velocity snapshots (float32 raw, 201×801, Fortran column-major)
     ├── gradient/                gradient_1.bin
     ├── misfits_iter*.npy        per-iter misfit_tot logged by run_iter.py
     └── fffs_iter*.npy           per-iter line-search scalar fff
+
+All `*.bin` in `results/` share the same layout: little-endian float32,
+201 × 801, Fortran column-major (read with `np.fromfile(path, "<f4").reshape(801, 201).T`).
+The TRUE and initial models let you reproduce the convergence-vs-TRUE plot
+without needing the full Fortran bundle.
 ```
 
 **Heads-up about the tests.** `tests/conftest.py` hard-codes two paths that
