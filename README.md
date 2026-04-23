@@ -85,7 +85,39 @@ other at iteration 20; both reduce RMS-vs-TRUE by ~19 m/s from the 155.9 m/s
 initial model). iter 21–30 are torch-only runs that continue the descent and
 reach a new minimum at iter 28 (135.83 m/s).*
 
-### 1.3 Performance (RTX 5090, single GPU, batch = 8 plane waves)
+### 1.3 Reproducing the observed data from scratch (blind data-gen)
+
+`datagen/` contains an end-to-end pipeline that regenerates the observed
+plane-wave CSGs using only the TRUE velocity model and the Ricker source — no
+code or scripts from the author's `pwmva_package`. Pipeline:
+
+```
+1. 201 point-source shot gathers (full FD, IsFS=.true., PML=100)  ~30 s on RTX 5090
+2. per-shot direct-wave mute (|xg − xs|/1500 + 0.102 s)
+3. tau-p slant-stack → 41 plane-wave CSGs
+   (xref = max(xs) if p<0 else min(xs) — sign-dependent reference)
+```
+
+**Data match** vs the shipped `results/observed/cpg/cpg_{k}.bin`:
+per-shot Pearson **mean 0.962**, min 0.819 (edge ±45°), max 0.977 (mid ±20°).
+
+**Inversion match**: running the same 20-iter torch PWEMVA on the
+freshly-generated data vs the shipped data:
+
+| iter | generated → TRUE | shipped → TRUE | Δ |
+|------|------------------|-----------------|----|
+| 1 | 146.755 | 146.721 | +0.03 |
+| 5 | **139.24** | 139.81 | −0.57 |
+| 10 | **136.17** | 138.88 | **−2.71** |
+| 15 | **135.99** | 138.98 | **−2.99** |
+| 20 | 136.12 | 137.47 | **−1.35** |
+
+The blindly-regenerated data actually converges **faster** to TRUE in
+iters 5-15 (2–3 m/s better) than the shipped cpg. See
+[`datagen/README.md`](datagen/README.md) for the full pipeline, known residual
+differences, and v2 attempts that were tried and failed.
+
+### 1.4 Performance (RTX 5090, single GPU, batch = 8 plane waves)
 
 | run segment | wall time |
 |-------------|-----------|
@@ -159,6 +191,12 @@ FD time loop; the only serial axis is time. Dynamic warping stays on the CPU
 │   ├── _viz.py                  plot helpers + Pearson / rms_rel
 │   ├── test_parity_*.py         six parity test modules, covering T1–T6
 │   └── _viz_out/                21 parity PNGs (source, image ops, FD, RTM, wavepath, iter 1, convergence)
+├── datagen/                    ★ end-to-end reproduction of the observed cpg from TRUE velocity
+│   ├── README.md               pipeline (201 shot-gathers + per-shot direct-wave mute + tau-p)
+│   ├── scripts/gen_shots_taup.py   single-file pipeline, ~30 s on RTX 5090
+│   ├── inversion/              velinv_{1,5,10,15,20}.bin from 20-iter run on generated data
+│   ├── viz/                    data-match + convergence + evolution + diff figures
+│   └── metrics.json            per-shot Pearson + per-iter RMS frozen numbers
 └── results/
     ├── model/                   vel_true_201x801x2.5m.bin (TRUE model) + velh_init_201x801x2.5m.bin (initial model)
     ├── observed/                Ricker source.bin + cpg/cpg_{1..41}.bin observed plane-wave CSGs (~189 MB)

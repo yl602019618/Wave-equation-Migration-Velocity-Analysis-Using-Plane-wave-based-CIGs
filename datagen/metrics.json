@@ -1,0 +1,183 @@
+{
+  "data": {
+    "pearson_mean": 0.9618745057002338,
+    "pearson_min": 0.8186224394323406,
+    "pearson_max": 0.9768354887482309,
+    "per_shot": [
+      0.81862,
+      0.90685,
+      0.94426,
+      0.9629,
+      0.97071,
+      0.97355,
+      0.97525,
+      0.97588,
+      0.97632,
+      0.97661,
+      0.97684,
+      0.97617,
+      0.97665,
+      0.97499,
+      0.97411,
+      0.97505,
+      0.97404,
+      0.97446,
+      0.97403,
+      0.97389,
+      0.97449,
+      0.97389,
+      0.97403,
+      0.97446,
+      0.97404,
+      0.97505,
+      0.97411,
+      0.97499,
+      0.97665,
+      0.97617,
+      0.97684,
+      0.97661,
+      0.97632,
+      0.97588,
+      0.97525,
+      0.97355,
+      0.97071,
+      0.9629,
+      0.94426,
+      0.90685,
+      0.81862
+    ]
+  },
+  "inversion": {
+    "init_vs_TRUE_rms": 155.902,
+    "iter1_taup_vs_TRUE": 146.755,
+    "iter1_author_vs_TRUE": 146.721,
+    "iter1_taup_vs_author": 2.778,
+    "iter5_taup_vs_TRUE": 139.241,
+    "iter5_author_vs_TRUE": 139.81,
+    "iter5_taup_vs_author": 18.135
+  },
+  "config": {
+    "nshots": 201,
+    "shot_span_m": [
+      0.0,
+      2000.0
+    ],
+    "ng": 401,
+    "recv_span_m": [
+      0.0,
+      2000.0
+    ],
+    "recv_dx_m": 5.0,
+    "nt": 3000,
+    "dt_s": 0.0006,
+    "freq_hz": 40.0,
+    "npml": 100,
+    "v_surface_for_mute_mps": 1500.0,
+    "mute_buffer_s": 0.102,
+    "xref_convention": "max(xs) if p<0 else min(xs)",
+    "shift_direction": "cpg[shift:]+=sg[:NT-shift]",
+    "IsFS": true
+  },
+  "inversion_20iter": [
+    {
+      "iter": 1,
+      "v1_vs_TRUE": 146.755,
+      "author_vs_TRUE": 146.721
+    },
+    {
+      "iter": 2,
+      "v1_vs_TRUE": 144.544,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 3,
+      "v1_vs_TRUE": 142.389,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 4,
+      "v1_vs_TRUE": 140.622,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 5,
+      "v1_vs_TRUE": 139.241,
+      "author_vs_TRUE": 139.81
+    },
+    {
+      "iter": 6,
+      "v1_vs_TRUE": 137.219,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 7,
+      "v1_vs_TRUE": 137.234,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 8,
+      "v1_vs_TRUE": 136.786,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 9,
+      "v1_vs_TRUE": 136.481,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 10,
+      "v1_vs_TRUE": 136.171,
+      "author_vs_TRUE": 138.878
+    },
+    {
+      "iter": 11,
+      "v1_vs_TRUE": 136.17,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 12,
+      "v1_vs_TRUE": 136.17,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 13,
+      "v1_vs_TRUE": 136.247,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 14,
+      "v1_vs_TRUE": 136.127,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 15,
+      "v1_vs_TRUE": 135.993,
+      "author_vs_TRUE": 138.983
+    },
+    {
+      "iter": 16,
+      "v1_vs_TRUE": 135.605,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 17,
+      "v1_vs_TRUE": 137.163,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 18,
+      "v1_vs_TRUE": 135.848,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 19,
+      "v1_vs_TRUE": 135.603,
+      "author_vs_TRUE": null
+    },
+    {
+      "iter": 20,
+      "v1_vs_TRUE": 136.115,
+      "author_vs_TRUE": 137.466
+    }
+  ]
+}
